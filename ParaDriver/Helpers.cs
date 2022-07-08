@@ -1,4 +1,6 @@
-﻿namespace ParaDriver
+﻿using System.IO;
+
+namespace ParaDriver
 {
     internal class Helpers
     {

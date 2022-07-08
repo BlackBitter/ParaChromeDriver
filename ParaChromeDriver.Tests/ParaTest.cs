@@ -35,11 +35,11 @@ namespace ParaChromeDriver.Tests
                 (ChromeDriver chromeDriver)
                 =>
                 {
-                    Gmail gmail = new Gmail(chromeDriver);
-                    gmail.SignIn();
+                    //Gmail gmail = new Gmail(chromeDriver);
+                    //gmail.SignIn();
 
                 });
-            ParaChromeDriver.Start(ParaConstants.Mode.ManualParasitic, @"C:\Users\patel\AppData\Local\Google\Chrome\Data");
+            ParaChromeDriver.Start(ParaConstants.Mode.Parasitic, @"C:\Users\patel\AppData\Local\Google\Chrome\Data");
         }
 
         [Test]
