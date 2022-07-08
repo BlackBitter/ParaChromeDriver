@@ -1,16 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <AssemblyVersion>1.0.0.3</AssemblyVersion>
-    <FileVersion>1.0.0.3</FileVersion>
+    <AssemblyVersion>1.0.0.4</AssemblyVersion>
+    <FileVersion>1.0.0.4</FileVersion>
     <NeutralLanguage>en-001</NeutralLanguage>
     <IsPublishable>True</IsPublishable>
-    <Version>1.0.0.3</Version>
+    <Version>1.0.0.4</Version>
     <PackageIcon>ParaChromeIcon.png</PackageIcon>
+    <PackageId>ParaChromeDriver</PackageId>
+    <AssemblyName>ParaChromeDriver</AssemblyName>
+    <RootNamespace>ParaChromeDriver</RootNamespace>
+    <Authors>BlackBitter</Authors>
   </PropertyGroup>
 
   <ItemGroup>
