@@ -1,6 +1,7 @@
 ﻿namespace ParaDriver
 {
     using OpenQA.Selenium;
+    using System;
     using System.Threading;
 
     internal class ParaNavigator : INavigation
