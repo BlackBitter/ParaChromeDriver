@@ -1,5 +1,4 @@
-﻿using OpenQA.Selenium.Chrome;
-[assembly: LevelOfParallelism(3)]
+﻿[assembly: LevelOfParallelism(3)]
 
 namespace ParaChromeDriver
 {

@@ -4,9 +4,11 @@ using OpenQA.Selenium.DevTools;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Internal;
 using System.Collections.ObjectModel;
-using static ParaChromeDriver.ParaConstants;
+using WebDriverManager.DriverConfigs.Impl;
+using WebDriverManager.Helpers;
+using static ParaDriver.ParaConstants;
 
-namespace ParaChromeDriver
+namespace ParaDriver
 {
     public class ParaChromeDriver : IWebDriver, IDisposable, IJavaScriptExecutor, ISupportsLogs, IDevTools, ISearchContext, IFindsElement, ITakesScreenshot, ISupportsPrint, IActionExecutor, IAllowsFileDetection, IHasCapabilities, IHasCommandExecutor, IHasSessionId, ICustomDriverCommandExecutor
     {
@@ -21,8 +23,7 @@ namespace ParaChromeDriver
         {
             if (Mode == Mode.Degugging && ParaSetup != null)
             {
-                CurrentDriver = new ChromeDriver(chromeOptions);
-                ParaSetup(CurrentDriver);
+                ParaSetup(GetChomeDriver(chromeOptions));
             }
 
             if (Mode == Mode.Parasitic || Mode == Mode.ManualParasitic) 
@@ -69,6 +70,7 @@ namespace ParaChromeDriver
                     StartParasiticMode();
                     break;
             }
+
         }
 
         private static void StartParasiticMode()
@@ -85,7 +87,7 @@ namespace ParaChromeDriver
                         chromeOptions.AddArguments($"--user-data-dir={MasterParaPath}");
                     }
 
-                    var driver = new ChromeDriver(chromeOptions);
+                    var driver = GetChomeDriver(chromeOptions);
 
                     try
                     {
@@ -189,7 +191,7 @@ namespace ParaChromeDriver
 
         public INavigation Navigate()
         {
-            return CurrentDriver.Navigate();
+            return new ParaNavigator(CurrentDriver);
         }
 
         public void Quit()
@@ -329,6 +331,14 @@ namespace ParaChromeDriver
             {
                 CurrentDriver = new ChromeDriver(chromeOptions);
             }
+        }
+
+        private static ChromeDriver GetChomeDriver(ChromeOptions chromeOptions)
+        {
+            var driverManager = new WebDriverManager.DriverManager();
+            driverManager.SetUpDriver(new ChromeConfig(), VersionResolveStrategy.MatchingBrowser);
+
+            return new ChromeDriver(chromeOptions);
         }
     }
 }

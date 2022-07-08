@@ -1,4 +1,4 @@
-﻿namespace ParaChromeDriver
+﻿namespace ParaDriver
 {
     internal class Helpers
     {
