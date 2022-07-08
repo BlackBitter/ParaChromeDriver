@@ -1,8 +1,8 @@
-using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-
 namespace ParaChromeDriver.Tests
 {
+    using OpenQA.Selenium;
+    using OpenQA.Selenium.Chrome;
+    using ParaDriver;
     public class ParaTest
     {
         ThreadLocal<ParaChromeDriver> chromeDriver = new ThreadLocal<ParaChromeDriver>();

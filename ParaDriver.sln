@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParaChromeDriver", "ParaChromeDriver\ParaChromeDriver.csproj", "{BCA8BE66-5D4A-480E-987E-B5F459AE1AA9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParaDriver", "ParaDriver\ParaDriver.csproj", "{BCA8BE66-5D4A-480E-987E-B5F459AE1AA9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParaChromeDriver.Tests", "ParaChromeDriver.Tests\ParaChromeDriver.Tests.csproj", "{570E8E9F-DAB3-4218-98DE-3A4F21C261B2}"
 EndProject
