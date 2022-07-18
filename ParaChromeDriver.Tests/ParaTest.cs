@@ -11,6 +11,7 @@ namespace ParaChromeDriver.Tests
         public void Setup()
         {
             ChromeOptions chromeOptions = new ChromeOptions();
+            chromeOptions.AddArgument("start-maximized");
             chromeDriver.Value = new ParaChromeDriver(chromeOptions);
 
             int retry = 30;
@@ -18,7 +19,7 @@ namespace ParaChromeDriver.Tests
             {
                 try
                 {
-                    chromeDriver.Value.Navigate().GoToUrl("https://gmail.com");
+                    chromeDriver.Value.Navigate().GoToUrl("https://www.facebook.com");
                     break;
                 }
                 catch (WebDriverException ex)
@@ -35,11 +36,11 @@ namespace ParaChromeDriver.Tests
                 (ChromeDriver chromeDriver)
                 =>
                 {
-                    //Gmail gmail = new Gmail(chromeDriver);
-                    //gmail.SignIn();
+                    Facebook facebook = new Facebook(chromeDriver);
+                    facebook.SignIn();
 
                 });
-            ParaChromeDriver.Start(ParaConstants.Mode.Parasitic, @"C:\Users\patel\AppData\Local\Google\Chrome\Data");
+            ParaChromeDriver.Start(ParaConstants.Mode.Parasitic, @"C:\Users\patel\AppData\Local\Google\Chrome\Test\ParaData");
         }
 
         [Test]
