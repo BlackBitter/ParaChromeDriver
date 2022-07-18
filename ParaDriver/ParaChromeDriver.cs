@@ -25,9 +25,10 @@ namespace ParaDriver
 
         public ParaChromeDriver(ChromeOptions chromeOptions)
         {
-            if (Mode == Mode.Degugging && ParaSetup != null)
+            if (Mode == Mode.Debugging && ParaSetup != null)
             {
-                ParaSetup(GetChomeDriver(chromeOptions));
+                CurrentDriver = GetChomeDriver(chromeOptions);
+                ParaSetup(CurrentDriver);
             }
 
             if (Mode == Mode.Parasitic || Mode == Mode.ManualParasitic) 
@@ -62,8 +63,8 @@ namespace ParaDriver
             Mode = paraMode;
             switch (paraMode)
             {
-                case Mode.Degugging:
-                    Mode = Mode.Degugging;
+                case Mode.Debugging:
+                    Mode = Mode.Debugging;
                     break;
                 case Mode.ManualParasitic:
                     Mode = Mode.ManualParasitic;
@@ -85,7 +86,7 @@ namespace ParaDriver
                 MasterParaPath = string.Format(ParaPathContainer, Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
                 if (!IsParaMasterDataCreated)
                 {
-                    if (Mode != Mode.Degugging)
+                    if (Mode != Mode.Debugging)
                     {
                         CleanParaJunks();
                         chromeOptions.AddArguments($"--user-data-dir={MasterParaPath}");
@@ -106,7 +107,7 @@ namespace ParaDriver
                     }
                     finally
                     {
-                        if (Mode != Mode.Degugging)
+                        if (Mode != Mode.Debugging)
                         {
                             driver.Quit();
                             IsParaMasterDataCreated = true;
@@ -155,14 +156,14 @@ namespace ParaDriver
 
         public IFileDetector FileDetector
         {
-            get => FileDetector;
+            get => CurrentDriver.FileDetector;
             set
             {
-                FileDetector = value;
+                CurrentDriver.FileDetector = value;
             }
         }
 
-        public ICapabilities Capabilities => Capabilities;
+        public ICapabilities Capabilities => CurrentDriver.Capabilities;
 
         public ICommandExecutor CommandExecutor => CurrentDriver.CommandExecutor;
 
@@ -210,7 +211,7 @@ namespace ParaDriver
             }
             finally
             {
-                if (Mode != Mode.Degugging)
+                if (Mode != Mode.Debugging)
                 {
                     Thread.Sleep(1000);
                     Helpers.DeleteFolder(ParaPath);
@@ -326,14 +327,14 @@ namespace ParaDriver
                 chromeOptions.AddArguments($"--user-data-dir={ParaPath}");
             }
 
-            if (Mode == Mode.Degugging)
+            if (Mode == Mode.Debugging)
             {
                 StartParasiticMode();
             }
 
-            if (Mode != Mode.Degugging)
+            if (Mode != Mode.Debugging)
             {
-                CurrentDriver = new ChromeDriver(chromeOptions);
+                CurrentDriver = GetChomeDriver(chromeOptions);
             }
         }
 

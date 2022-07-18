@@ -4,11 +4,11 @@
     <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <AssemblyVersion>1.0.0.4</AssemblyVersion>
-    <FileVersion>1.0.0.4</FileVersion>
+    <AssemblyVersion>1.0.0.7</AssemblyVersion>
+    <FileVersion>1.0.0.7</FileVersion>
     <NeutralLanguage>en-001</NeutralLanguage>
     <IsPublishable>True</IsPublishable>
-    <Version>1.0.0.4</Version>
+    <Version>1.0.0.7</Version>
     <PackageIcon>ParaChromeIcon.png</PackageIcon>
     <PackageId>ParaChromeDriver</PackageId>
     <AssemblyName>ParaChromeDriver</AssemblyName>

@@ -4,7 +4,7 @@
     {
         public enum Mode
         {
-            Degugging,
+            Debugging,
             ManualParasitic,
             Parasitic
         }
