@@ -1,5 +1,4 @@
 ﻿using OpenQA.Selenium;
-using OtpNet;
 
 namespace ParaChromeDriver.Tests
 {
