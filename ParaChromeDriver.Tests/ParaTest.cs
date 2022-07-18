@@ -40,7 +40,7 @@ namespace ParaChromeDriver.Tests
                     facebook.SignIn();
 
                 });
-            ParaChromeDriver.Start(ParaConstants.Mode.Parasitic, @"C:\Users\patel\AppData\Local\Google\Chrome\Test\ParaData");
+            ParaChromeDriver.Start(ParaConstants.Mode.ManualParasitic, @"C:\Users\patel\AppData\Local\Google\Chrome\Test\ParaData");
         }
 
         [Test]
