@@ -57,7 +57,7 @@ namespace ParaDriver
         }
 
         /// <summary>
-        /// Function should be called one to create an state of chrome that can be used by other tests
+        /// Function should be called once to create an state of chrome that can be used by other tests
         /// </summary>
         public static void Start(Mode paraMode = Mode.Parasitic, string? paraPath = null)
         {
