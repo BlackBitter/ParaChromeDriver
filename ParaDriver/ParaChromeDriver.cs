@@ -11,6 +11,7 @@ using System.Threading;
 using WebDriverManager.DriverConfigs.Impl;
 using WebDriverManager.Helpers;
 using static ParaDriver.ParaConstants;
+using System.Linq;
 
 namespace ParaDriver
 {
@@ -27,7 +28,7 @@ namespace ParaDriver
         {
             if (Mode == Mode.Debugging && ParaSetup != null)
             {
-                CurrentDriver = GetChomeDriver(chromeOptions);
+                CurrentDriver = GetChomeDriver(chromeOptions, Guid.Empty, string.Empty);
                 ParaSetup(CurrentDriver);
             }
 
@@ -92,7 +93,7 @@ namespace ParaDriver
                         chromeOptions.AddArguments($"--user-data-dir={MasterParaPath}");
                     }
 
-                    var driver = GetChomeDriver(chromeOptions);
+                    var driver = GetChomeDriver(chromeOptions, Guid.Empty, string.Empty);
 
                     try
                     {
@@ -121,12 +122,26 @@ namespace ParaDriver
         {
             if (paraDataPath != null)
             {
+                if(!(paraDataPath.Split("\\").Last() == "ParaData"))
+                {
+                    throw new Exception("Please Create a folder with ParaData name");
+                }
+
+                var folderCount = new DirectoryInfo(paraDataPath).GetDirectories().Count();
+
+                if (folderCount == 0)
+                {
+                    StartParasiticMode();
+                    Helpers.Copy(MasterParaPath, paraDataPath);
+                    CleanParaJunks();
+                }
+
                 MasterParaPath = paraDataPath;
                 IsParaMasterDataCreated = true;
             }
             else
             {
-                throw new Exception("Manual Parasitic mode requires data directory path of pre set profile data!");
+                throw new Exception("Manual Parasitic mode requires data directory path of pre set profile data! Please make sure you have a folder created with \"ParaData\" name.");
             }
         }
 
@@ -176,7 +191,9 @@ namespace ParaDriver
 
         public void Dispose()
         {
+            Helpers.ForceCloseParaChrome(ParaId);
             CurrentDriver.Dispose();
+            Helpers.DeleteFolder(ParaPath);
         }
 
         public IWebElement FindElement(By by)
@@ -213,6 +230,7 @@ namespace ParaDriver
             {
                 if (Mode != Mode.Debugging)
                 {
+                    Helpers.ForceCloseParaChrome(ParaId);
                     Thread.Sleep(1000);
                     Helpers.DeleteFolder(ParaPath);
                 }
@@ -233,6 +251,21 @@ namespace ParaDriver
             {
                 foreach (var junkDir in junkDirs)
                 {
+                    Guid paraId = new Guid();
+                    try
+                    {
+                        paraId  = new Guid(junkDir.ToString().Split('\\').Last().Replace("ParaData", string.Empty));
+                    }
+                    catch
+                    {
+
+                    }
+                    
+                    if(paraId != default(Guid))
+                    {
+                        Helpers.ForceCloseParaChrome(paraId);
+                    }
+
                     Helpers.DeleteFolder(junkDir.ToString());
                 }
             }
@@ -334,16 +367,46 @@ namespace ParaDriver
 
             if (Mode != Mode.Debugging)
             {
-                CurrentDriver = GetChomeDriver(chromeOptions);
+                CurrentDriver = GetChomeDriver(chromeOptions, ParaId, ParaPath);
             }
         }
 
-        private static ChromeDriver GetChomeDriver(ChromeOptions chromeOptions)
+        private static ChromeDriver GetChomeDriver(ChromeOptions chromeOptions, Guid paraId, string ParaPath)
         {
             var driverManager = new WebDriverManager.DriverManager();
             driverManager.SetUpDriver(new ChromeConfig(), VersionResolveStrategy.MatchingBrowser);
+            ChromeDriver chromeDriver = null;
 
-            return new ChromeDriver(chromeOptions);
+            int retry = 3;
+            while(retry-- > 0)
+            {
+                try
+                {
+                    chromeDriver = new ChromeDriver(chromeOptions);
+                    return chromeDriver;
+                }
+                catch
+                {
+                    if (!(paraId == Guid.Empty && ParaPath == string.Empty))
+                    {
+                        if(retry == 2)
+                        {
+                            Dictionary<string, object> parameters = new Dictionary<string, object>();
+                            chromeOptions.AddUserProfilePreference("profile.exit_type", "Normal");
+                        }
+
+                        Helpers.ForceCloseParaChrome(paraId);
+                    }
+                }
+            }
+
+            if (chromeDriver == null)
+            {
+                Helpers.DeleteFolder(ParaPath);
+                throw new Exception("Unable to start chrome and load chrome profile within given time, It seems you are running parachrome in parallel with a low proccesing power machine! To avoid this failure request you to reduce the number of parallel runs or increase the processing power of your machine.");
+            }
+
+            return chromeDriver;
         }
     }
 }

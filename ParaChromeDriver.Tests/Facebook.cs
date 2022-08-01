@@ -33,7 +33,7 @@ namespace ParaChromeDriver.Tests
                 }
             }
 
-            webDriver.FindElement(UserNameTextBox).SendKeys("");
+            webDriver.FindElement(UserNameTextBox).SendKeys("patelsurajofficial@gmail.com");
             webDriver.FindElement(PasswordTextBox).SendKeys("");
             webDriver.FindElement(Next).Click();
 
