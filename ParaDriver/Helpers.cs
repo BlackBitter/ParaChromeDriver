@@ -1,8 +1,12 @@
-﻿using System.IO;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
+using System.Management;
+using System.Text.RegularExpressions;
 
 namespace ParaDriver
 {
-    internal class Helpers
+    public class Helpers
     {
         public static void Copy(string sourceDirectory, string targetDirectory)
         {
@@ -11,18 +15,38 @@ namespace ParaDriver
 
         public static void DeleteFolder(string path)
         {
-            DirectoryInfo di = new DirectoryInfo(path);
+            Process.Start("CMD.exe", $"/K rmdir /s /q \"{path}\"");
+        }
 
-            foreach (FileInfo file in di.GetFiles())
+        public static void ForceCloseParaChrome(Guid paraId)
+        {
+            string pid = GetPID(paraId).ToString();
+            if(pid != "-1")
             {
-                file.Delete();
+                Process.Start("CMD.exe", $"/K taskkill /f /pid {pid} /t");
+            }
+        }
+
+        private static int GetPID(Guid paraId)
+        {
+            Process[] processes = Process.GetProcessesByName("chrome");
+
+            for (int p = 0; p < processes.Length; p++)
+            {
+                ManagementObjectSearcher commandLineSearcher = new("SELECT CommandLine FROM Win32_Process WHERE ProcessId = " + processes[p].Id);
+                string commandLine = string.Empty;
+                foreach (ManagementObject commandLineObject in commandLineSearcher.Get())
+                {
+                    commandLine += commandLineObject["CommandLine"];
+                }
+
+                if (commandLine.Contains(paraId.ToString()))
+                {
+                    return processes[p].Id;
+                }
             }
 
-            foreach (DirectoryInfo dir in di.GetDirectories())
-            {
-                dir.Delete(true);
-            }
-            di?.Delete();
+            return -1;
         }
 
         private static void CopyAll(DirectoryInfo source, DirectoryInfo target)

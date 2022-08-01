@@ -1,13 +1,13 @@
 namespace ParaChromeDriver.Tests
 {
     using OpenQA.Selenium;
+    using OpenQA.Selenium.Chrome;
     using ParaDriver;
 
     [TestFixture]
     [Parallelizable]
-    public class ParaTest : BaseTest
+    public class ParaTest1 : BaseTest
     {
-
         [Test]
         [Parallelizable]
         public void Test1()
