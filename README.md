@@ -77,6 +77,47 @@ Once the parasite is attach we can start our parachromedriver by calling ```Para
 
 In ```OneTimeTeardown()``` we call ```ParaChromeDriver.Stop()``` to stop the parachromedriver and do memory cleaning.
 
+Now we can create the instance of ParaChromeDrive similar to ChromeDriver and navigate to the web application url and you will see the you are into you app without login. Below is sample code for your test layer.
+
+```sh
+namespace TestLayer
+{
+    [TestFixture]
+    [Parallelizable]
+    public class ParaTest1
+    {
+        [OneTimeSetUp]
+        public void OneTimeSetup() { }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown() { }
+
+        [SetUp]
+        public void Setup() { }
+
+        [TearDown]
+        public void Teardown() { }
+
+        [Test]
+        [Parallelizable]
+        public void Test1()
+        {
+            var driver = new ParaChromeDriver();
+
+            // Test Code here without login.
+        }
+
+        [Test]
+        [Parallelizable]
+        public void Test2()
+        {
+            var driver = new ParaChromeDriver();
+
+            // Test Code here without login.
+        }
+    }
+}
+```
 ### 2. Manual Parasitic mode
 Manual parasitic mode is generally used when we have a web application which has Captcha, and we don't want to bypass it.
 In manual parasitic mode keep our para data in a custom path and run the test cases in sequence/parallel. using this paradata.
@@ -128,3 +169,4 @@ Simply change the mode to ```Mode.Debugging```
 ```sh
             ParaChromeDriver.Start(ParaConstants.Mode.Debugging);
 ```
+
