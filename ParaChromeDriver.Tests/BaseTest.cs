@@ -28,9 +28,13 @@ namespace ParaChromeDriver.Tests
             chromeDriver.Value.Quit();
         }
 
-        protected void TakeScreenshot()
+        protected void OpenMessangerAndTakeScreenshot()
         {
+            // Click on message box
             chromeDriver.Value.FindElement(By.XPath("//div[@aria-label='Messenger']")).Click();
+
+
+            // Take screenshot
             Screenshot ss = ((ITakesScreenshot)chromeDriver.Value).GetScreenshot();
             ss.SaveAsFile(@$"C:\Test\Image{TestContext.CurrentContext.Test.FullName}.png",
             ScreenshotImageFormat.Png);

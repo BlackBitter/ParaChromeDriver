@@ -12,42 +12,42 @@ namespace ParaChromeDriver.Tests
         [Parallelizable]
         public void Test1()
         {
-            TakeScreenshot();
+            OpenMessangerAndTakeScreenshot();
         }
 
         [Test]
         [Parallelizable]
         public void Test2()
         {
-            TakeScreenshot();
+            OpenMessangerAndTakeScreenshot();
         }
 
         [Test]
         [Parallelizable]
         public void Test3()
         {
-            TakeScreenshot();
+            OpenMessangerAndTakeScreenshot();
         }
 
         [Test]
         [Parallelizable]
         public void Test4()
         {
-            TakeScreenshot();
+            OpenMessangerAndTakeScreenshot();
         }
 
         [Test]
         [Parallelizable]
         public void Test5()
         {
-            TakeScreenshot();
+            OpenMessangerAndTakeScreenshot();
         }
 
         [Test]
         [Parallelizable]
         public void Test6()
         {
-            TakeScreenshot();
+            OpenMessangerAndTakeScreenshot();
         }
     }
 }
