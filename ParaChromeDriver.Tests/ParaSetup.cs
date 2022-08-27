@@ -10,14 +10,15 @@
         public void OneTimeSetUp()
         {
             ParaChromeDriver.AttachParasite(
-                (ChromeDriver chromeDriver)
+                chromeDriver
                 =>
                 {
                     Facebook facebook = new Facebook(chromeDriver);
                     facebook.SignIn();
 
                 });
-            ParaChromeDriver.Start(ParaConstants.Mode.Parasitic, @"E:\WorkPlace\DataPara\ParaData");
+
+            ParaChromeDriver.Start(ParaConstants.Mode.Parasitic);
         }
 
         [OneTimeTearDown]

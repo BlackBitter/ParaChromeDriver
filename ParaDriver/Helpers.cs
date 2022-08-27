@@ -15,7 +15,7 @@ namespace ParaDriver
 
         public static void DeleteFolder(string path)
         {
-            Process.Start("CMD.exe", $"/K rmdir /s /q \"{path}\"");
+            Directory.Delete(path, true);
         }
 
         public static void ForceCloseParaChrome(Guid paraId)
@@ -23,7 +23,9 @@ namespace ParaDriver
             string pid = GetPID(paraId).ToString();
             if(pid != "-1")
             {
-                Process.Start("CMD.exe", $"/K taskkill /f /pid {pid} /t");
+                Process process = new Process();
+                process.StartInfo = new ProcessStartInfo() { FileName = "cmd.exe", Arguments = $"/c taskkill /f /pid {pid} /t" };
+                process.Start();
             }
         }
 
