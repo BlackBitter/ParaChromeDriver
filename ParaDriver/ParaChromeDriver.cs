@@ -17,22 +17,26 @@ namespace ParaDriver
 {
     public class ParaChromeDriver : IWebDriver, IDisposable, IJavaScriptExecutor, ISupportsLogs, IDevTools, ISearchContext, IFindsElement, ITakesScreenshot, ISupportsPrint, IActionExecutor, IAllowsFileDetection, IHasCapabilities, IHasCommandExecutor, IHasSessionId, ICustomDriverCommandExecutor
     {
-        private const string ParaPathContainer = "{0}\\AppData\\Local\\Google\\Chrome\\ParaData";
-        public Guid ParaId;
-        private string ParaPath;
-        private static Mode Mode;
+        private string paraPath;
+        private static Mode mode;
+        private static string masterParaPath = string.Empty;
+        private static ParaSetupDelegate? paraSetup;
 
+        public Guid ParaId { get; private set; }
         public ChromeDriver CurrentDriver { get; private set; }
+        public static bool IsParaMasterDataCreated { get; private set; } = false;
+
+        public delegate void ParaSetupDelegate(ChromeDriver chromeDriver);
 
         public ParaChromeDriver(ChromeOptions chromeOptions)
         {
-            if (Mode == Mode.Debugging && ParaSetup != null)
+            if (mode == Mode.Debugging && paraSetup != null)
             {
                 CurrentDriver = GetChomeDriver(chromeOptions, Guid.Empty, string.Empty);
-                ParaSetup(CurrentDriver);
+                paraSetup(CurrentDriver);
             }
 
-            if (Mode == Mode.Parasitic || Mode == Mode.ManualParasitic) 
+            if (mode == Mode.Parasitic || mode == Mode.ManualParasitic) 
             { 
                 ParaInitialize(chromeOptions); 
             }
@@ -40,20 +44,15 @@ namespace ParaDriver
 
         public static void Stop()
         {
-            if (Mode == Mode.Parasitic)
+            if (mode == Mode.Parasitic)
             {
-                Helpers.DeleteFolder(MasterParaPath);
+                Helpers.DeleteFolder(masterParaPath);
             }
         }
 
-        public delegate void ParaSetupDelegate(ChromeDriver chromeDriver);
-        public static bool IsParaMasterDataCreated { get; private set; } = false;
-        private static string MasterParaPath { get; set; } = string.Empty;
-        private static ParaSetupDelegate? ParaSetup { get; set; }
-
         public static void AttachParasite(ParaSetupDelegate prestate)
         {
-            ParaSetup += prestate;
+            paraSetup += prestate;
         }
 
         /// <summary>
@@ -61,45 +60,51 @@ namespace ParaDriver
         /// </summary>
         public static void Start(Mode paraMode = Mode.Parasitic, string? paraPath = null)
         {
-            Mode = paraMode;
+            mode = paraMode;
+            masterParaPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "AppData\\Local\\Google\\Chrome\\ParaChrome\\ParaData");
+            
+            if (!Directory.Exists(masterParaPath))
+            {
+                Directory.CreateDirectory(masterParaPath);
+            }
+
             switch (paraMode)
             {
                 case Mode.Debugging:
-                    Mode = Mode.Debugging;
+                    mode = Mode.Debugging;
                     break;
                 case Mode.ManualParasitic:
-                    Mode = Mode.ManualParasitic;
+                    mode = Mode.ManualParasitic;
                     StartManualParasiticMode(paraPath);
                     break;
                 case Mode.Parasitic:
-                    Mode = Mode.Parasitic;
+                    mode = Mode.Parasitic;
                     StartParasiticMode();
                     break;
             }
-
         }
 
         private static void StartParasiticMode()
         {
-            if (ParaSetup != null)
+            if (paraSetup != null)
             {
                 ChromeOptions chromeOptions = new ChromeOptions();
-                MasterParaPath = string.Format(ParaPathContainer, Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
+                
                 if (!IsParaMasterDataCreated)
                 {
-                    if (Mode != Mode.Debugging)
+                    if (mode != Mode.Debugging)
                     {
                         CleanParaJunks();
-                        chromeOptions.AddArguments($"--user-data-dir={MasterParaPath}");
+                        chromeOptions.AddArguments($"--user-data-dir={masterParaPath}");
                     }
 
                     var driver = GetChomeDriver(chromeOptions, Guid.Empty, string.Empty);
 
                     try
                     {
-                        if (ParaSetup != null)
+                        if (paraSetup != null)
                         {
-                            ParaSetup(driver);
+                            paraSetup(driver);
                         }
                     }
                     catch
@@ -108,7 +113,7 @@ namespace ParaDriver
                     }
                     finally
                     {
-                        if (Mode != Mode.Debugging)
+                        if (mode != Mode.Debugging)
                         {
                             driver.Quit();
                             IsParaMasterDataCreated = true;
@@ -118,31 +123,34 @@ namespace ParaDriver
             }
         }
 
-        private static void StartManualParasiticMode(string? paraDataPath)
+        private static void StartManualParasiticMode(string paraDataPath)
         {
-            if (paraDataPath != null)
+            if(paraDataPath == null)
             {
-                if(!(paraDataPath.Split("\\").Last() == "ParaData"))
-                {
-                    throw new Exception("Please Create a folder with ParaData name");
-                }
-
-                var folderCount = new DirectoryInfo(paraDataPath).GetDirectories().Count();
-
-                if (folderCount == 0)
-                {
-                    StartParasiticMode();
-                    Helpers.Copy(MasterParaPath, paraDataPath);
-                    CleanParaJunks();
-                }
-
-                MasterParaPath = paraDataPath;
-                IsParaMasterDataCreated = true;
+                paraDataPath = masterParaPath;
             }
             else
             {
-                throw new Exception("Manual Parasitic mode requires data directory path of pre set profile data! Please make sure you have a folder created with \"ParaData\" name.");
+                paraDataPath = Path.Combine(paraDataPath, "ParaData");
+
+                if (!Directory.Exists(paraDataPath))
+                {
+                    Directory.CreateDirectory(paraDataPath);
+                }
             }
+
+            var folderCount = new DirectoryInfo(paraDataPath).GetDirectories().Count();
+
+            if (folderCount == 0)
+            {
+                StartParasiticMode();
+                Helpers.Copy(masterParaPath, paraDataPath);
+                CleanParaJunks();
+            }
+
+            masterParaPath = paraDataPath;
+            CleanParaJunks();
+            IsParaMasterDataCreated = true;
         }
 
         public string Url
@@ -193,7 +201,7 @@ namespace ParaDriver
         {
             Helpers.ForceCloseParaChrome(ParaId);
             CurrentDriver.Dispose();
-            Helpers.DeleteFolder(ParaPath);
+            Helpers.DeleteFolder(paraPath);
         }
 
         public IWebElement FindElement(By by)
@@ -228,14 +236,13 @@ namespace ParaDriver
             }
             finally
             {
-                if (Mode != Mode.Debugging)
+                if (mode != Mode.Debugging)
                 {
                     Helpers.ForceCloseParaChrome(ParaId);
                     Thread.Sleep(1000);
-                    Helpers.DeleteFolder(ParaPath);
+                    Helpers.DeleteFolder(paraPath);
                 }
             }
-
         }
 
         public ITargetLocator SwitchTo()
@@ -245,7 +252,7 @@ namespace ParaDriver
 
         public static void CleanParaJunks()
         {
-            var junkDirs = new DirectoryInfo(MasterParaPath)?.Parent?.GetDirectories("ParaData*");
+            var junkDirs = new DirectoryInfo(masterParaPath)?.Parent?.GetDirectories("ParaData*");
 
             try
             {
@@ -254,19 +261,22 @@ namespace ParaDriver
                     Guid paraId = new Guid();
                     try
                     {
-                        paraId  = new Guid(junkDir.ToString().Split('\\').Last().Replace("ParaData", string.Empty));
+                        paraId = new Guid(junkDir.ToString().Split('\\').Last().Replace("ParaData", string.Empty));
                     }
                     catch
                     {
 
                     }
-                    
-                    if(paraId != default(Guid))
+
+                    if (paraId != default(Guid))
                     {
                         Helpers.ForceCloseParaChrome(paraId);
+                        Helpers.DeleteFolder(junkDir.ToString());
                     }
-
-                    Helpers.DeleteFolder(junkDir.ToString());
+                    else if(mode != Mode.ManualParasitic)
+                    {
+                        Helpers.DeleteFolder(junkDir.ToString());
+                    }
                 }
             }
             catch (Exception ex)
@@ -352,22 +362,22 @@ namespace ParaDriver
 
         private void ParaInitialize(ChromeOptions chromeOptions)
         {
-            if (IsParaMasterDataCreated && (Mode == Mode.Parasitic || Mode == Mode.ManualParasitic))
+            if (IsParaMasterDataCreated && (mode == Mode.Parasitic || mode == Mode.ManualParasitic))
             {
                 ParaId = Guid.NewGuid();
-                ParaPath = $"{MasterParaPath}{ParaId}";
-                Helpers.Copy(MasterParaPath, ParaPath);
-                chromeOptions.AddArguments($"--user-data-dir={ParaPath}");
+                paraPath = $"{masterParaPath}{ParaId}";
+                Helpers.Copy(masterParaPath, paraPath);
+                chromeOptions.AddArguments($"--user-data-dir={paraPath}");
             }
 
-            if (Mode == Mode.Debugging)
+            if (mode == Mode.Debugging)
             {
                 StartParasiticMode();
             }
 
-            if (Mode != Mode.Debugging)
+            if (mode != Mode.Debugging)
             {
-                CurrentDriver = GetChomeDriver(chromeOptions, ParaId, ParaPath);
+                CurrentDriver = GetChomeDriver(chromeOptions, ParaId, paraPath);
             }
         }
 
