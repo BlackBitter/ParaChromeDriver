@@ -11,6 +11,9 @@ Parasite chrome driver allows you to do pre-setup for authentication, utilize th
 - It allows you to run UI tests in parallel with a single login.
 
 ## Setup Guide
+
+[![ParaChromeDriver](https://i9.ytimg.com/vi/0as7n8_cMrc/mq2.jpg?sqp=CJSoupoG&rs=AOn4CLBw1-yp8PjBv3axZ30j_qPK9B6XoQ)](https://youtu.be/0as7n8_cMrc "Para Setup")
+
 Parachrome comes with 3 modes 
 1) Parasitic Mode
 2) Manual Parasitic Mode

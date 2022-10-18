@@ -10,7 +10,10 @@ namespace ParaDriver
     {
         public static void Copy(string sourceDirectory, string targetDirectory)
         {
-            CopyAll(new DirectoryInfo(sourceDirectory), new DirectoryInfo(targetDirectory));
+            if(sourceDirectory != targetDirectory)
+            {
+                CopyAll(new DirectoryInfo(sourceDirectory), new DirectoryInfo(targetDirectory));
+            }
         }
 
         public static void DeleteFolder(string path)
