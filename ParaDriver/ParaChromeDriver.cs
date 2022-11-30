@@ -146,6 +146,7 @@ namespace ParaDriver
                 StartParasiticMode();
                 Helpers.Copy(masterParaPath, paraDataPath);
                 CleanParaJunks();
+                Helpers.DeleteFolder(masterParaPath);
             }
 
             masterParaPath = paraDataPath;
