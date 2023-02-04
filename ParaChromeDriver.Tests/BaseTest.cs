@@ -17,7 +17,8 @@ namespace ParaChromeDriver.Tests
         public void Setup()
         {
             ChromeOptions chromeOptions = new ChromeOptions();
-            
+            chromeOptions.AddArgument("--disable-notifications");
+
             chromeDriver.Value = new ParaChromeDriver(chromeOptions);
             chromeDriver.Value.Navigate().GoToUrl("https://www.facebook.com");
         }
