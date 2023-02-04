@@ -8,8 +8,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading;
-using WebDriverManager.DriverConfigs.Impl;
-using WebDriverManager.Helpers;
 using static ParaDriver.ParaConstants;
 using System.Linq;
 
@@ -384,8 +382,6 @@ namespace ParaDriver
 
         private static ChromeDriver GetChomeDriver(ChromeOptions chromeOptions, Guid paraId, string ParaPath)
         {
-            var driverManager = new WebDriverManager.DriverManager();
-            driverManager.SetUpDriver(new ChromeConfig(), VersionResolveStrategy.MatchingBrowser);
             ChromeDriver chromeDriver = null;
 
             int retry = 3;
