@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <AssemblyVersion>1.0.0.17</AssemblyVersion>
-    <FileVersion>1.0.0.17</FileVersion>
+    <AssemblyVersion>2.0.1</AssemblyVersion>
+    <FileVersion>2.0.1</FileVersion>
     <NeutralLanguage>en-001</NeutralLanguage>
     <IsPublishable>True</IsPublishable>
-    <Version>1.0.0.17</Version>
+    <Version>2.0.1</Version>
     <PackageIcon>ParaChromeIcon.png</PackageIcon>
     <PackageId>ParaChromeDriver</PackageId>
     <AssemblyName>ParaChromeDriver</AssemblyName>
@@ -17,8 +17,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Selenium.WebDriver" Version="4.8.0" />
-    <PackageReference Include="System.Management" Version="6.0.0" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.10.0" />
+    <PackageReference Include="System.Management" Version="7.0.2" />
   </ItemGroup>
 
   <ItemGroup>
